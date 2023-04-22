@@ -3,14 +3,15 @@ package presentation;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.io.File;
+
 
 public class Conecta4GUI extends JFrame {
 
     public JMenuBar barra;
     public JMenu menu;
     public JMenuItem New, Open, Saved, Exit;
+    public JFileChooser Seleccion;
 
     public Conecta4GUI(){
         prepareElements();
@@ -19,10 +20,8 @@ public class Conecta4GUI extends JFrame {
 
     private void prepareElements() {
         setTitle("Conecta4");
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int windowWidth = screenSize.width / 2;
-        int windowHeight = screenSize.width / 2;
-        setSize(windowWidth,windowHeight);
+        Dimension Screen = Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds(0,0,Screen.width/2,Screen.height/2);
         setLocationRelativeTo(null);
         prepareElementsMenu();
     }
@@ -85,13 +84,23 @@ public class Conecta4GUI extends JFrame {
     }
 
     private void saved() {
-        JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
+        Seleccion = new JFileChooser();
+        Seleccion.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        int opcion = Seleccion.showSaveDialog(this);
+        if(opcion != JFileChooser.CANCEL_OPTION){
+            File Archivo = Seleccion.getSelectedFile();
+            JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+        }
     }
-
     private void open() {
-        JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
+        Seleccion = new JFileChooser();
+        Seleccion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int opcion = Seleccion.showOpenDialog(this);
+        if(opcion != JFileChooser.CANCEL_OPTION){
+            File Archivo = Seleccion.getSelectedFile();
+            JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+        }
     }
-
     private void New() {
         JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
     }
@@ -102,3 +111,5 @@ public class Conecta4GUI extends JFrame {
             System.exit(0);
         }
     }
+
+}
