@@ -3,12 +3,14 @@ package presentation;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Conecta4GUI extends JFrame {
 
     public JMenuBar barra;
     public JMenu menu;
-    public MenuItem New,Open,Saved,Exit;
+    public JMenuItem New, Open, Saved, Exit;
 
     public Conecta4GUI(){
         prepareElements();
@@ -17,8 +19,10 @@ public class Conecta4GUI extends JFrame {
 
     private void prepareElements() {
         setTitle("Conecta4");
-        Dimension Screen = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(0,0,Screen.width,Screen.height);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int windowWidth = screenSize.width / 2;
+        int windowHeight = screenSize.width / 2;
+        setSize(windowWidth,windowHeight);
         setLocationRelativeTo(null);
         prepareElementsMenu();
     }
@@ -27,10 +31,10 @@ public class Conecta4GUI extends JFrame {
         barra = new JMenuBar();
         menu = new JMenu("Menú");
         barra.add(menu);
-        JMenuItem New = new JMenuItem("New");
-        JMenuItem Open = new JMenuItem("Open");
-        JMenuItem Saved = new JMenuItem("Saved");
-        JMenuItem Exit = new JMenuItem("Exit");
+        New = new JMenuItem("New");
+        Open = new JMenuItem("Open");
+        Saved = new JMenuItem("Saved");
+        Exit = new JMenuItem("Exit");
         menu.add(New);
         menu.addSeparator();
         menu.add(Open);
@@ -43,7 +47,7 @@ public class Conecta4GUI extends JFrame {
     }
 
     private void prepareAccions() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -57,7 +61,7 @@ public class Conecta4GUI extends JFrame {
         New.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                NewGame();
+                New();
             }
         });
         Open.addActionListener(new ActionListener(){
@@ -81,20 +85,20 @@ public class Conecta4GUI extends JFrame {
     }
 
     private void saved() {
-        JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+        JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
     }
 
     private void open() {
-        JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+        JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
     }
 
-    private void NewGame() {
-        JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+    private void New() {
+        JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
     }
     private void exit() {
-        if(JOptionPane.showConfirmDialog(rootPane,"Are you sure want exit") == JOptionPane.YES_OPTION){
-            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        } else{setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);}
+        int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            System.exit(0);
+        }
     }
-
-}
