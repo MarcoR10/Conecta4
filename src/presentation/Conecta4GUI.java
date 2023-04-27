@@ -17,26 +17,28 @@ public class Conecta4GUI extends JFrame {
     private JButton[][] buttons = new JButton[NUM_ROWS][NUM_COLS];
     public JMenuBar barra;
     public JMenu menu;
-    public JMenuItem New, Open, Saved, Refresh, Exit;
+    public JMenuItem New, Open, Saved, Refresh, tableroColor, Exit;
     public JFileChooser Seleccion;
-    public JLabel jugador1Label, jugador2Label, tiempoLabel;
+    public JLabel jugador1Label, jugador2Label, turnoLabel;
     public JPanel infoPanel;
 
     private enum Player {
         PLAYER_1, PLAYER_2
     }
+
     private Player currentPlayer = Player.PLAYER_1;
-    public Conecta4GUI(){
+
+    public Conecta4GUI() {
         prepareElements();
         prepareAccions();
-        prepareElementsBoard(5,5);
+        prepareElementsBoard(5, 5);
         refresh();
     }
 
     private void prepareElements() {
         setTitle("Conecta4");
         Dimension Screen = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(0,0,Screen.width/2,Screen.height/2);
+        setBounds(0, 0, Screen.width / 2, Screen.height / 2);
         setLocationRelativeTo(null);
         prepareElementsMenu();
 
@@ -58,12 +60,12 @@ public class Conecta4GUI extends JFrame {
         jugador2Label.setOpaque(true);
         jugador2Label.setBackground(Color.BLUE);
 
-        tiempoLabel = new JLabel("Turno: 0", SwingConstants.CENTER);
+        turnoLabel = new JLabel("Turno: 0", SwingConstants.CENTER);
 
         infoPanel.add(Box.createVerticalGlue());
         infoPanel.add(jugador1Label);
         infoPanel.add(jugador2Label);
-        infoPanel.add(tiempoLabel);
+        infoPanel.add(turnoLabel);
         infoPanel.add(Box.createVerticalGlue());
 
         getContentPane().add(infoPanel, BorderLayout.WEST);
@@ -79,6 +81,8 @@ public class Conecta4GUI extends JFrame {
         Saved = new JMenuItem("Saved");
         Refresh = new JMenuItem("Refresh");
         Exit = new JMenuItem("Exit");
+        tableroColor = new JMenuItem("Cambiar el color del tablero");
+        JMenuItem fichasColor = new JMenuItem("Cambiar el color de las fichas");
         menu.add(New);
         menu.addSeparator();
         menu.add(Open);
@@ -86,6 +90,10 @@ public class Conecta4GUI extends JFrame {
         menu.add(Saved);
         menu.addSeparator();
         menu.add(Refresh);
+        menu.addSeparator();
+        menu.add(tableroColor);
+        menu.addSeparator();
+        menu.add(fichasColor);
         menu.addSeparator();
         menu.add(Exit);
         setJMenuBar(barra);
@@ -102,6 +110,7 @@ public class Conecta4GUI extends JFrame {
         });
         prepareAccionsMenu();
     }
+
     private void prepareAccionsMenu() {
 
         New.addActionListener(new ActionListener() {
@@ -110,13 +119,13 @@ public class Conecta4GUI extends JFrame {
                 New();
             }
         });
-        Open.addActionListener(new ActionListener(){
+        Open.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 open();
             }
         });
-        Saved.addActionListener(new ActionListener(){
+        Saved.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saved();
@@ -128,7 +137,14 @@ public class Conecta4GUI extends JFrame {
                 refresh();
             }
         });
-        Exit.addActionListener(new ActionListener(){
+
+        tableroColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cambiarColorTablero(5,5);
+            }
+        });
+        Exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 exit();
@@ -183,20 +199,22 @@ public class Conecta4GUI extends JFrame {
         Seleccion = new JFileChooser();
         Seleccion.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         int opcion = Seleccion.showSaveDialog(this);
-        if(opcion != JFileChooser.CANCEL_OPTION){
+        if (opcion != JFileChooser.CANCEL_OPTION) {
             File Archivo = Seleccion.getSelectedFile();
             JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
         }
     }
+
     private void open() {
         Seleccion = new JFileChooser();
         Seleccion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int opcion = Seleccion.showOpenDialog(this);
-        if(opcion != JFileChooser.CANCEL_OPTION){
+        if (opcion != JFileChooser.CANCEL_OPTION) {
             File Archivo = Seleccion.getSelectedFile();
             JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
         }
     }
+
     private void New() {
         JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
     }
@@ -207,6 +225,16 @@ public class Conecta4GUI extends JFrame {
         if (result == JOptionPane.YES_OPTION) {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             System.exit(0);
+        }
+    }
+
+    private void cambiarColorTablero(int numRows, int numCols) {
+        Color newColor = JColorChooser.showDialog(this, "Seleccionar un color para el tablero", getBackground());
+        if (newColor != null) {
+            for (int row = 0; row < numRows; row++) {
+                for (int col = 0; col < numCols; col++)
+                    buttons[row][col].setBackground(newColor);
+            }
         }
     }
 
@@ -221,6 +249,6 @@ public class Conecta4GUI extends JFrame {
         currentPlayer = Player.PLAYER_1;
         jugador1Label.setBackground(Color.RED);
         jugador2Label.setBackground(Color.BLUE);
-        tiempoLabel.setText("Turno: 0");
+        turnoLabel.setText("Turno: 0");
     }
 }
