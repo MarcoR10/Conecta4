@@ -9,18 +9,17 @@ import java.io.File;
 
 public class Conecta4GUI extends JFrame {
 
-    private static final int NUM_ROWS = 5;
-    private static final int NUM_COLS = 5;
-
-    private int[][] tablero = new int[NUM_ROWS][NUM_COLS];
-
-    private JButton[][] buttons = new JButton[NUM_ROWS][NUM_COLS];
+    private static final int NUM_ROWS = 10;
+    private static final int NUM_COLS = 10;
+    private Color color;
+    public JButton[][] buttons = new JButton[NUM_ROWS][NUM_COLS];
     public JMenuBar barra;
-    public JMenu menu;
-    public JMenuItem New, Open, Saved, Refresh, Exit;
+    public JMenu menu,Configuracion;
+    public JMenuItem New, Open, Saved, Refresh,Color, Exit;
     public JFileChooser Seleccion;
     public JLabel jugador1Label, jugador2Label, tiempoLabel;
     public JPanel infoPanel;
+
 
     private enum Player {
         PLAYER_1, PLAYER_2
@@ -28,8 +27,8 @@ public class Conecta4GUI extends JFrame {
     private Player currentPlayer = Player.PLAYER_1;
     public Conecta4GUI(){
         prepareElements();
+        prepareElementsBoard(NUM_ROWS,NUM_COLS, java.awt.Color.cyan);
         prepareAccions();
-        prepareElementsBoard(5,5);
         refresh();
     }
 
@@ -45,18 +44,16 @@ public class Conecta4GUI extends JFrame {
         infoPanel.setPreferredSize(new Dimension(300, 10));
 
 
-        infoPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.BLACK),
-                new EmptyBorder(10, 100, 10, 10)));
+        infoPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK), new EmptyBorder(10, 100, 10, 10)));
 
         jugador1Label = new JLabel("Player 1: Red", SwingConstants.CENTER);
         jugador1Label.setOpaque(true);
-        jugador1Label.setBackground(Color.RED);
-        jugador1Label.setForeground(Color.WHITE);
+        jugador1Label.setBackground(java.awt.Color.RED);
+        jugador1Label.setForeground(java.awt.Color.WHITE);
 
         jugador2Label = new JLabel("Player 2: Blue", SwingConstants.CENTER);
         jugador2Label.setOpaque(true);
-        jugador2Label.setBackground(Color.BLUE);
+        jugador2Label.setBackground(java.awt.Color.BLUE);
 
         tiempoLabel = new JLabel("Turno: 0", SwingConstants.CENTER);
 
@@ -73,12 +70,16 @@ public class Conecta4GUI extends JFrame {
     private void prepareElementsMenu() {
         barra = new JMenuBar();
         menu = new JMenu("Menú");
+        Configuracion = new JMenu("Configuracion");
         barra.add(menu);
+        barra.add(Configuracion);
         New = new JMenuItem("New");
         Open = new JMenuItem("Open");
         Saved = new JMenuItem("Saved");
         Refresh = new JMenuItem("Refresh");
         Exit = new JMenuItem("Exit");
+        Color = new JMenuItem("Cambio de Color");
+        Configuracion.add(Color);
         menu.add(New);
         menu.addSeparator();
         menu.add(Open);
@@ -92,6 +93,28 @@ public class Conecta4GUI extends JFrame {
 
     }
 
+    private void prepareElementsBoard(int numRows, int numCols,Color color) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                buttons[row][col] = new JButton();
+                buttons[row][col].setBackground(color);
+                gbc.gridx = col;
+                gbc.gridy = row;
+                gbc.weightx = 1.0 / numCols;
+                gbc.weighty = 1.0 / numRows;
+                gbc.ipadx = 150 / numCols;
+                gbc.ipady = 350 / numRows;
+                panel.add(buttons[row][col], gbc);
+
+            }
+        }
+        //panel.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
+        getContentPane().add(panel, BorderLayout.CENTER);
+    }
+
     private void prepareAccions() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -101,7 +124,9 @@ public class Conecta4GUI extends JFrame {
             }
         });
         prepareAccionsMenu();
+        prepareAccionsBoard();
     }
+
     private void prepareAccionsMenu() {
 
         New.addActionListener(new ActionListener() {
@@ -134,37 +159,28 @@ public class Conecta4GUI extends JFrame {
                 exit();
             }
         });
+
+        Color.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color();
+            }
+        });
     }
+    private void prepareAccionsBoard() {
 
-    private void prepareElementsBoard(int numRows, int numCols) {
-
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-
-        int buttonWidth = 150 / numCols;
-        int buttonHeight = 350 / numRows;
-
-        for (int row = 0; row < numRows; row++) {
-            for (int col = 0; col < numCols; col++) {
-                buttons[row][col] = new JButton();
-                gbc.gridx = col;
-                gbc.gridy = row;
-                gbc.weightx = 3.0 / numCols;
-                gbc.weighty = 3.0 / numRows;
-                gbc.ipadx = buttonWidth;
-                gbc.ipady = buttonHeight;
-                panel.add(buttons[row][col], gbc);
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
                 buttons[row][col].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         JButton clickedButton = (JButton) e.getSource();
                         if (clickedButton.getBackground().equals(UIManager.getColor("Button.background"))) {
                             if (currentPlayer == Player.PLAYER_1) {
-                                clickedButton.setBackground(Color.RED);
+                                clickedButton.setBackground(java.awt.Color.RED);
                                 currentPlayer = Player.PLAYER_2;
                             } else {
-                                clickedButton.setBackground(Color.BLUE);
+                                clickedButton.setBackground(java.awt.Color.BLUE);
                                 currentPlayer = Player.PLAYER_1;
                             }
                         }
@@ -173,10 +189,6 @@ public class Conecta4GUI extends JFrame {
             }
         }
 
-        int margin = 100;
-        panel.setBorder(BorderFactory.createEmptyBorder(margin, margin, margin, margin));
-
-        getContentPane().add(panel, BorderLayout.EAST);
     }
 
     private void saved() {
@@ -213,14 +225,22 @@ public class Conecta4GUI extends JFrame {
     private void refresh() {
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
-                tablero[row][col] = 0;
                 buttons[row][col].setBackground(UIManager.getColor("Button.background"));
                 buttons[row][col].setEnabled(true);
             }
         }
         currentPlayer = Player.PLAYER_1;
-        jugador1Label.setBackground(Color.RED);
-        jugador2Label.setBackground(Color.BLUE);
+        jugador1Label.setBackground(java.awt.Color.RED);
+        jugador2Label.setBackground(java.awt.Color.BLUE);
         tiempoLabel.setText("Turno: 0");
+    }
+
+    private void Color() {
+        color = JColorChooser.showDialog(null,"Seleciona el color del tablero", java.awt.Color.WHITE);
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                //buttons[row][col].getBackground(java.awt.Color.GREEN);
+            }
+        }
     }
 }
