@@ -1,16 +1,13 @@
 package presentation;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
-
 public class Conecta4GUI extends JFrame {
-
-    private static final int NUM_ROWS = 10;
-    private static final int NUM_COLS = 10;
+    public int NUM_ROWS;
+    public int NUM_COLS;
     private Color color;
     public JButton[][] buttons = new JButton[NUM_ROWS][NUM_COLS];
     public JMenuBar barra;
@@ -26,6 +23,11 @@ public class Conecta4GUI extends JFrame {
     }
     private Player currentPlayer = Player.PLAYER_1;
     public Conecta4GUI(){
+        String input = JOptionPane.showInputDialog(null, "Ingrese el tamaño del tablero:");
+        String[] values = input.split(" ");
+        NUM_ROWS = Integer.parseInt(values[0]);
+        NUM_COLS = Integer.parseInt(values[1]);
+        buttons = new JButton[NUM_ROWS][NUM_COLS];
         prepareElements();
         prepareElementsBoard(NUM_ROWS,NUM_COLS, java.awt.Color.cyan);
         prepareAccions();
@@ -38,7 +40,6 @@ public class Conecta4GUI extends JFrame {
         setBounds(0,0,Screen.width/2,Screen.height/2);
         setLocationRelativeTo(null);
         prepareElementsMenu();
-
         infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.PAGE_AXIS));
         infoPanel.setPreferredSize(new Dimension(300, 10));
@@ -62,11 +63,8 @@ public class Conecta4GUI extends JFrame {
         infoPanel.add(jugador2Label);
         infoPanel.add(tiempoLabel);
         infoPanel.add(Box.createVerticalGlue());
-
         getContentPane().add(infoPanel, BorderLayout.WEST);
     }
-
-
     private void prepareElementsMenu() {
         barra = new JMenuBar();
         menu = new JMenu("Menú");
@@ -159,7 +157,6 @@ public class Conecta4GUI extends JFrame {
                 exit();
             }
         });
-
         Color.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -169,78 +166,74 @@ public class Conecta4GUI extends JFrame {
     }
     private void prepareAccionsBoard() {
 
-        for (int row = 0; row < NUM_ROWS; row++) {
-            for (int col = 0; col < NUM_COLS; col++) {
-                buttons[row][col].addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JButton clickedButton = (JButton) e.getSource();
-                        if (clickedButton.getBackground().equals(UIManager.getColor("Button.background"))) {
-                            if (currentPlayer == Player.PLAYER_1) {
-                                clickedButton.setBackground(java.awt.Color.RED);
-                                currentPlayer = Player.PLAYER_2;
-                            } else {
-                                clickedButton.setBackground(java.awt.Color.BLUE);
-                                currentPlayer = Player.PLAYER_1;
+                for (int row = 0; row < NUM_ROWS; row++) {
+                    for (int col = 0; col < NUM_COLS; col++) {
+                        buttons[row][col].addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                JButton clickedButton = (JButton) e.getSource();
+                                if (clickedButton.getBackground().equals(UIManager.getColor("Button.background"))) {
+                                    if (currentPlayer == Player.PLAYER_1) {
+                                        clickedButton.setBackground(java.awt.Color.RED);
+                                        currentPlayer = Player.PLAYER_2;
+                                    } else {
+                                        clickedButton.setBackground(java.awt.Color.BLUE);
+                                        currentPlayer = Player.PLAYER_1;
+                                    }
+                                }
                             }
-                        }
+                        });
                     }
-                });
+                }
+            }
+
+            private void saved() {
+                Seleccion = new JFileChooser();
+                Seleccion.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                int opcion = Seleccion.showSaveDialog(this);
+                if(opcion != JFileChooser.CANCEL_OPTION){
+                    File Archivo = Seleccion.getSelectedFile();
+                    JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+                }
+            }
+            private void open() {
+                Seleccion = new JFileChooser();
+                Seleccion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int opcion = Seleccion.showOpenDialog(this);
+                if(opcion != JFileChooser.CANCEL_OPTION){
+                    File Archivo = Seleccion.getSelectedFile();
+                    JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+                }
+            }
+            private void New() {
+                JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
+            }
+            private void exit() {
+                int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    System.exit(0);
+                }
+            }
+            private void refresh() {
+                for (int row = 0; row < NUM_ROWS; row++) {
+                    for (int col = 0; col < NUM_COLS; col++) {
+                        buttons[row][col].setBackground(UIManager.getColor("Button.background"));
+                        buttons[row][col].setEnabled(true);
+                    }
+                }
+                currentPlayer = Player.PLAYER_1;
+                jugador1Label.setBackground(java.awt.Color.RED);
+                jugador2Label.setBackground(java.awt.Color.BLUE);
+                tiempoLabel.setText("Turno: 0");
+            }
+
+            private void Color() {
+                color = JColorChooser.showDialog(null,"Seleciona el color del tablero", java.awt.Color.WHITE);
+                for (int row = 0; row < NUM_ROWS; row++) {
+                    for (int col = 0; col < NUM_COLS; col++) {
+                        //buttons[row][col].getBackground(java.awt.Color.GREEN);
+                    }
+                }
             }
         }
-
-    }
-
-    private void saved() {
-        Seleccion = new JFileChooser();
-        Seleccion.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        int opcion = Seleccion.showSaveDialog(this);
-        if(opcion != JFileChooser.CANCEL_OPTION){
-            File Archivo = Seleccion.getSelectedFile();
-            JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
-        }
-    }
-    private void open() {
-        Seleccion = new JFileChooser();
-        Seleccion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int opcion = Seleccion.showOpenDialog(this);
-        if(opcion != JFileChooser.CANCEL_OPTION){
-            File Archivo = Seleccion.getSelectedFile();
-            JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
-        }
-    }
-    private void New() {
-        JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
-    }
-
-
-    private void exit() {
-        int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
-        if (result == JOptionPane.YES_OPTION) {
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            System.exit(0);
-        }
-    }
-
-    private void refresh() {
-        for (int row = 0; row < NUM_ROWS; row++) {
-            for (int col = 0; col < NUM_COLS; col++) {
-                buttons[row][col].setBackground(UIManager.getColor("Button.background"));
-                buttons[row][col].setEnabled(true);
-            }
-        }
-        currentPlayer = Player.PLAYER_1;
-        jugador1Label.setBackground(java.awt.Color.RED);
-        jugador2Label.setBackground(java.awt.Color.BLUE);
-        tiempoLabel.setText("Turno: 0");
-    }
-
-    private void Color() {
-        color = JColorChooser.showDialog(null,"Seleciona el color del tablero", java.awt.Color.WHITE);
-        for (int row = 0; row < NUM_ROWS; row++) {
-            for (int col = 0; col < NUM_COLS; col++) {
-                //buttons[row][col].getBackground(java.awt.Color.GREEN);
-            }
-        }
-    }
-}
