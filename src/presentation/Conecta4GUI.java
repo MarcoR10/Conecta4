@@ -6,58 +6,52 @@ import java.awt.event.*;
 import java.io.File;
 
 public class Conecta4GUI extends JFrame {
-    public int NUM_ROWS;
-    public int NUM_COLS;
+
+    //-------------------------------------------------Atributos-------------------------------------------------//
+    private int NUM_ROWS,NUM_COLS;
     private Color color;
-    public JButton[][] buttons = new JButton[NUM_ROWS][NUM_COLS];
-    public JMenuBar barra;
-    public JMenu menu,Configuracion;
-    public JMenuItem New, Open, Saved, Refresh,Color, Exit;
-    public JFileChooser Seleccion;
-    public JLabel jugador1Label, jugador2Label, tiempoLabel;
-    public JPanel infoPanel;
-
-
-    private enum Player {
-        PLAYER_1, PLAYER_2
-    }
+    private JButton[][] buttons;
+    private JMenuBar barra;
+    private JMenu menu,Configuracion;
+    private JMenuItem New, Open, Saved, Restart,Color, Exit,Tamaño;
+    private JFileChooser Seleccion;
+    private JLabel jugador1Label, jugador2Label, tiempoLabel;
+    private JPanel infoPanel;
+    private enum Player {PLAYER_1, PLAYER_2}
     private Player currentPlayer = Player.PLAYER_1;
+    //-------------------------------------------------////-------------------------------------------------//
     public Conecta4GUI(){
         String input = JOptionPane.showInputDialog(null, "Ingrese el tamaño del tablero:");
         String[] values = input.split(" ");
         NUM_ROWS = Integer.parseInt(values[0]);
         NUM_COLS = Integer.parseInt(values[1]);
-        buttons = new JButton[NUM_ROWS][NUM_COLS];
         prepareElements();
-        prepareElementsBoard(NUM_ROWS,NUM_COLS, java.awt.Color.cyan);
+        prepareElementsBoard(NUM_ROWS,NUM_COLS,UIManager.getColor("Button.background") );
         prepareAccions();
-        refresh();
     }
 
+    //------------------------------------------------- Elementos -------------------------------------------------//
     private void prepareElements() {
+        //-------------------------------------------------//
         setTitle("Conecta4");
         Dimension Screen = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(0,0,Screen.width/2,Screen.height/2);
         setLocationRelativeTo(null);
+        //-------------------------------------------------//
         prepareElementsMenu();
+        //-------------------------------------------------//
         infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.PAGE_AXIS));
-        infoPanel.setPreferredSize(new Dimension(300, 10));
-
-
+        infoPanel.setPreferredSize(new Dimension(200, 10));
         infoPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK), new EmptyBorder(10, 100, 10, 10)));
-
         jugador1Label = new JLabel("Player 1: Red", SwingConstants.CENTER);
         jugador1Label.setOpaque(true);
         jugador1Label.setBackground(java.awt.Color.RED);
         jugador1Label.setForeground(java.awt.Color.WHITE);
-
         jugador2Label = new JLabel("Player 2: Blue", SwingConstants.CENTER);
         jugador2Label.setOpaque(true);
         jugador2Label.setBackground(java.awt.Color.BLUE);
-
         tiempoLabel = new JLabel("Turno: 0", SwingConstants.CENTER);
-
         infoPanel.add(Box.createVerticalGlue());
         infoPanel.add(jugador1Label);
         infoPanel.add(jugador2Label);
@@ -69,32 +63,40 @@ public class Conecta4GUI extends JFrame {
         barra = new JMenuBar();
         menu = new JMenu("Menú");
         Configuracion = new JMenu("Configuracion");
+        //-------------------------------------------------//
         barra.add(menu);
         barra.add(Configuracion);
+        //-------------------------------------------------//
         New = new JMenuItem("New");
         Open = new JMenuItem("Open");
         Saved = new JMenuItem("Saved");
-        Refresh = new JMenuItem("Refresh");
+        Restart = new JMenuItem("Restart");
         Exit = new JMenuItem("Exit");
-        Color = new JMenuItem("Cambio de Color");
+        Color = new JMenuItem("Color");
+        Tamaño = new JMenuItem("Tamaño");
+        //-------------------------------------------------//
+        Configuracion.add(Tamaño);
+        Configuracion.addSeparator();
         Configuracion.add(Color);
+        //-------------------------------------------------//
         menu.add(New);
         menu.addSeparator();
         menu.add(Open);
         menu.addSeparator();
         menu.add(Saved);
         menu.addSeparator();
-        menu.add(Refresh);
+        menu.add(Restart);
         menu.addSeparator();
         menu.add(Exit);
+        //-------------------------------------------------//
         setJMenuBar(barra);
-
     }
 
     private void prepareElementsBoard(int numRows, int numCols,Color color) {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
+        buttons = new JButton[NUM_ROWS][NUM_COLS];
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 buttons[row][col] = new JButton();
@@ -112,7 +114,7 @@ public class Conecta4GUI extends JFrame {
         //panel.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
         getContentPane().add(panel, BorderLayout.CENTER);
     }
-
+    //------------------------------------------------- Acciones -------------------------------------------------//
     private void prepareAccions() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -145,10 +147,10 @@ public class Conecta4GUI extends JFrame {
                 saved();
             }
         });
-        Refresh.addActionListener(new ActionListener() {
+        Restart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                refresh();
+                Restart();
             }
         });
         Exit.addActionListener(new ActionListener(){
@@ -163,77 +165,90 @@ public class Conecta4GUI extends JFrame {
                 Color();
             }
         });
+
+        Tamaño.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refresh();
+            }
+        });
     }
+
     private void prepareAccionsBoard() {
-
-                for (int row = 0; row < NUM_ROWS; row++) {
-                    for (int col = 0; col < NUM_COLS; col++) {
-                        buttons[row][col].addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                JButton clickedButton = (JButton) e.getSource();
-                                if (clickedButton.getBackground().equals(UIManager.getColor("Button.background"))) {
-                                    if (currentPlayer == Player.PLAYER_1) {
-                                        clickedButton.setBackground(java.awt.Color.RED);
-                                        currentPlayer = Player.PLAYER_2;
-                                    } else {
-                                        clickedButton.setBackground(java.awt.Color.BLUE);
-                                        currentPlayer = Player.PLAYER_1;
-                                    }
-                                }
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                buttons[row][col].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JButton clickedButton = (JButton) e.getSource();
+                        if (clickedButton.getBackground().equals(UIManager.getColor("Button.background"))) {
+                            if (currentPlayer == Player.PLAYER_1) {
+                                clickedButton.setBackground(java.awt.Color.RED);
+                                currentPlayer = Player.PLAYER_2;
+                            } else {
+                                clickedButton.setBackground(java.awt.Color.BLUE);
+                                currentPlayer = Player.PLAYER_1;
                             }
-                        });
+                        }
                     }
-                }
-            }
-
-            private void saved() {
-                Seleccion = new JFileChooser();
-                Seleccion.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                int opcion = Seleccion.showSaveDialog(this);
-                if(opcion != JFileChooser.CANCEL_OPTION){
-                    File Archivo = Seleccion.getSelectedFile();
-                    JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
-                }
-            }
-            private void open() {
-                Seleccion = new JFileChooser();
-                Seleccion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int opcion = Seleccion.showOpenDialog(this);
-                if(opcion != JFileChooser.CANCEL_OPTION){
-                    File Archivo = Seleccion.getSelectedFile();
-                    JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
-                }
-            }
-            private void New() {
-                JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
-            }
-            private void exit() {
-                int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
-                if (result == JOptionPane.YES_OPTION) {
-                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    System.exit(0);
-                }
-            }
-            private void refresh() {
-                for (int row = 0; row < NUM_ROWS; row++) {
-                    for (int col = 0; col < NUM_COLS; col++) {
-                        buttons[row][col].setBackground(UIManager.getColor("Button.background"));
-                        buttons[row][col].setEnabled(true);
-                    }
-                }
-                currentPlayer = Player.PLAYER_1;
-                jugador1Label.setBackground(java.awt.Color.RED);
-                jugador2Label.setBackground(java.awt.Color.BLUE);
-                tiempoLabel.setText("Turno: 0");
-            }
-
-            private void Color() {
-                color = JColorChooser.showDialog(null,"Seleciona el color del tablero", java.awt.Color.WHITE);
-                for (int row = 0; row < NUM_ROWS; row++) {
-                    for (int col = 0; col < NUM_COLS; col++) {
-                        //buttons[row][col].getBackground(java.awt.Color.GREEN);
-                    }
-                }
+                });
             }
         }
+    }
+
+    //------------------------------------------------- Funciones -------------------------------------------------//
+    private void saved() {
+        Seleccion = new JFileChooser();
+        Seleccion.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        int opcion = Seleccion.showSaveDialog(this);
+        if(opcion != JFileChooser.CANCEL_OPTION){
+            File Archivo = Seleccion.getSelectedFile();
+            JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+        }
+    }
+    private void open() {
+        Seleccion = new JFileChooser();
+        Seleccion.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int opcion = Seleccion.showOpenDialog(this);
+        if(opcion != JFileChooser.CANCEL_OPTION){
+            File Archivo = Seleccion.getSelectedFile();
+            JOptionPane.showMessageDialog(null, "Este Item todavía no esta implementado");
+        }
+    }
+    private void New() {
+        JOptionPane.showMessageDialog(null, "Este Item todavía no está implementado");
+    }
+    private void exit() {
+        int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            System.exit(0);
+        }
+    }
+    private void refresh() {
+        infoPanel.repaint();
+    }
+
+    private void Color() {
+        color = JColorChooser.showDialog(null,"Seleciona el color del tablero", java.awt.Color.WHITE);
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                buttons[row][col].setBackground(color);
+            }
+        }
+    }
+
+    private void Restart() {
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                buttons[row][col].setBackground(UIManager.getColor("Button.background"));
+                buttons[row][col].setEnabled(true);
+            }
+        }
+        currentPlayer = Player.PLAYER_1;
+        //jugador1Label.setBackground(java.awt.Color.RED);
+        //jugador2Label.setBackground(java.awt.Color.BLUE);
+        tiempoLabel.setText("Turno: 0");
+    }
+    //-------------------------------------------------////-------------------------------------------------//
+}
